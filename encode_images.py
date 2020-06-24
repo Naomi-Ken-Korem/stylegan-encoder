@@ -242,10 +242,11 @@ def main():
                 init_img_array = mask*np.array(initial_img_array) + (1.0-mask)*np.array(orig_img)
                 init_img_array = init_img_array.astype(np.uint8)
                 #img_array = np.where(mask, np.array(img_array), orig_img)
-            img = PIL.Image.fromarray(init_img_array, 'RGB')
-            init_img = PIL.Image.fromarray(img_array, 'RGB')
+            img = PIL.Image.fromarray(img_array, 'RGB')
+            init_img = PIL.Image.fromarray(init_img_array, 'RGB')
             img.save(os.path.join(args.generated_images_dir, f'{img_name}.png'), 'PNG')
             init_img.save(os.path.join(args.generated_images_dir, f'{img_name}_initial.png'), 'PNG')
+            print('Saving initial image')
             np.save(os.path.join(args.dlatent_dir, f'{img_name}.npy'), dlatent)
 
         generator.reset_dlatents()
