@@ -1,4 +1,5 @@
 import os
+import imageio
 import argparse
 import pickle
 from tqdm import tqdm
@@ -245,7 +246,8 @@ def main():
             img = PIL.Image.fromarray(img_array, 'RGB')
             init_img = PIL.Image.fromarray(init_img_array, 'RGB')
             img.save(os.path.join(args.generated_images_dir, f'{img_name}.png'), 'PNG')
-            init_img.save(os.path.join(args.generated_images_dir, f'{img_name}_initial.png'), 'PNG')
+            # init_img.save(os.path.join(args.generated_images_dir, f'{img_name}_initial.png'), 'PNG')
+            imageio.imwrite(f'{args.generated_images_dir}/{img_name}_init.png', init_img_array)
             print('Saving initial image')
             np.save(os.path.join(args.dlatent_dir, f'{img_name}.npy'), dlatent)
 
