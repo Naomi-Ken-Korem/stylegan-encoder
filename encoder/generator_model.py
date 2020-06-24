@@ -52,8 +52,8 @@ class Generator:
 
         self.dlatent_avg_def = model.get_var('dlatent_avg')
         self.reset_dlatent_avg()
-        self.sess = tf.compat.v1.get_default_session()
-        self.graph = tf.compat.v1.get_default_graph()
+        self.sess = tf.get_default_session()
+        self.graph = tf.get_default_graph()
 
         self.dlatent_variable = next(v for v in tf.global_variables() if 'learnable_dlatents' in v.name)
         self._assign_dlatent_ph = tf.placeholder(tf.float32, name="assign_dlatent_ph")

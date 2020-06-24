@@ -61,7 +61,7 @@ def unpack_bz2(src_path):
 
 class PerceptualModel:
     def __init__(self, args, batch_size=1, perc_model=None, sess=None):
-        self.sess = tf.compat.v1.get_default_session() if sess is None else sess
+        self.sess = tf.get_default_session() if sess is None else sess
         K.set_session(self.sess)
         self.epsilon = 0.00000001
         self.lr = args.lr

@@ -229,7 +229,7 @@ def training_loop(
     misc.save_image_grid(grid_fakes, os.path.join(submit_config.run_dir, 'fakes%06d.png' % resume_kimg), drange=drange_net, grid_size=grid_size)
     summary_log = tf.summary.FileWriter(submit_config.run_dir)
     if save_tf_graph:
-        summary_log.add_graph(tf.compat.v1.get_default_graph())
+        summary_log.add_graph(tf.get_default_graph())
     if save_weight_histograms:
         G.setup_weight_histograms(); D.setup_weight_histograms()
     metrics = metric_base.MetricGroup(metric_arg_list)
