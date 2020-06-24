@@ -132,7 +132,7 @@ def main():
     perceptual_model = PerceptualModel(args, perc_model=perc_model, batch_size=args.batch_size)
     perceptual_model.build_perceptual_model(generator, discriminator_network)
 
-    # ff_model = None
+    ff_model = None
 
     # Optimize (only) dlatents by minimizing perceptual loss between reference and generated images in feature space
     for images_batch in tqdm(split_to_batches(ref_images, args.batch_size), total=len(ref_images)//args.batch_size):
