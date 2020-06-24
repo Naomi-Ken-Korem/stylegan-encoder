@@ -132,7 +132,7 @@ def main():
     perceptual_model = PerceptualModel(args, perc_model=perc_model, batch_size=args.batch_size)
     perceptual_model.build_perceptual_model(generator, discriminator_network)
 
-    ff_model = None
+    # ff_model = None
 
     # Optimize (only) dlatents by minimizing perceptual loss between reference and generated images in feature space
     for images_batch in tqdm(split_to_batches(ref_images, args.batch_size), total=len(ref_images)//args.batch_size):
@@ -170,6 +170,9 @@ def main():
                     dlatents = ff_model.predict(load_images(images_batch,image_size=args.resnet_image_size))
         if dlatents is not None:
             generator.set_dlatents(dlatents)
+        initial_generated_images = generator.generate_images()
+
+
         op = perceptual_model.optimize(generator.dlatent_variable, iterations=args.iterations, use_optimizer=args.optimizer)
         pbar = tqdm(op, leave=False, total=args.iterations)
         vid_count = 0
@@ -221,7 +224,7 @@ def main():
             generator.set_dlatents(best_dlatent)
         generated_images = generator.generate_images()
         generated_dlatents = generator.get_dlatents()
-        for img_array, dlatent, img_path, img_name in zip(generated_images, generated_dlatents, images_batch, names):
+        for initial_img_array, img_array, dlatent, img_path, img_name in zip(initial_generated_images, generated_images, generated_dlatents, images_batch, names):
             mask_img = None
             if args.composite_mask and (args.load_mask or args.face_mask):
                 _, im_name = os.path.split(img_path)
@@ -235,9 +238,14 @@ def main():
                 mask = np.expand_dims(mask,axis=-1)
                 img_array = mask*np.array(img_array) + (1.0-mask)*np.array(orig_img)
                 img_array = img_array.astype(np.uint8)
+
+                init_img_array = mask*np.array(initial_img_array) + (1.0-mask)*np.array(orig_img)
+                init_img_array = init_img_array.astype(np.uint8)
                 #img_array = np.where(mask, np.array(img_array), orig_img)
-            img = PIL.Image.fromarray(img_array, 'RGB')
+            img = PIL.Image.fromarray(init_img_array, 'RGB')
+            init_img = PIL.Image.fromarray(img_array, 'RGB')
             img.save(os.path.join(args.generated_images_dir, f'{img_name}.png'), 'PNG')
+            init_img.save(os.path.join(args.generated_images_dir, f'{img_name}_initial.png'), 'PNG')
             np.save(os.path.join(args.dlatent_dir, f'{img_name}.npy'), dlatent)
 
         generator.reset_dlatents()
